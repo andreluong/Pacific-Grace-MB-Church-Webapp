@@ -17,7 +17,6 @@ const pool = new Pool({
 var app = express();
 
 const flash = require('express-flash')
-const session = require('express-session')
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 const users = [];
@@ -52,35 +51,32 @@ app.get('/signup', (req,res) => res.render('pages/signup'));
 
 app.post('/signup', async (req,res) => {
   try {
-    var firstName = req.body.fName;
-    var lastName  = req.body.lName;
-    var email = req.body.email;
-    var password = req.body.password;
+    const firstName = req.body.fName;
+    const lastName  = req.body.lName;
+    const email = req.body.email;
+    const password = req.body.password;
     let errors = [];
 
     const client = await pool.connect();
     //check if email is in database
-    var loginQuery = `select * from usr where email='${email}'`;
+    const loginQuery = `select * from usr where email='${email}'`;
     const result = await client.query(loginQuery);
-
-      if(result.rowsCount > 0) {
-        errors.push({message: "Email in use; please use a different email"})
-      }
-      if(password.length < 8) {
-        errors.push({message: "Password minimum length 5 characters"});
-      }
-
-      if(errors.length == 0) {
-        // adds account to database, creating account
-        var registerQuery = `insert into usr values('${firstName}', '${lastName}', '${email}', '${password}')`;
-        await client.query(registerQuery); 
-        res.redirect("/login");
-        client.release();
-      } else {
-        res.render('pages/signup', {errors});
-      }
-
-
+    
+    if(result.rowsCount > 0) {
+      errors.push({message: "Email in use; please use a different email"})
+    }
+    if(password.length < 8) {
+      errors.push({message: "Password minimum length 5 characters"});
+    }
+    if(errors.length == 0) {
+      // adds account to database, creating account
+      const registerQuery = `insert into usr values('${firstName}', '${lastName}', '${email}', '${password}')`;
+      await client.query(registerQuery); 
+      res.redirect("/login");
+      client.release();
+    } else {
+      res.render('pages/signup', {errors});
+    }
   } catch (err) {
     res.send(err);
   }
@@ -90,17 +86,17 @@ app.get('/login', (req,res) => res.render('pages/login'));
 
 app.post('/login', async (req,res) => {
   try {
-    var email = req.body.email;
-    var password = req.body.password;
-    var loginQuery = `select * from usr where email='${email}' and password='${password}'`;
+    const email = req.body.email;
+    const password = req.body.password;
+    const loginQuery = `select * from usr where email='${email}' and password='${password}'`;
     let errors = [];
 
     const client = await pool.connect();
     const result = await client.query(loginQuery);
     if (result.rowCount == 1) {
-      var userResult = result.rows[0];
+      const userResult = result.rows[0];
       req.session.user = {fname:userResult.fname, lname:userResult.lname,
-         email:userResult.email, password:userResult.password};
+        email:userResult.email, password:userResult.password, admin:userResult.admin};
       res.redirect("/database"); // homepage
     } else {
       errors.push({message: "Invalid email or password"});
