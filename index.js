@@ -18,10 +18,9 @@ var app = express();
 
 const flash = require('express-flash')
 const session = require('express-session')
-const users = [];
-
 const bcrypt = require('bcrypt')
 const passport = require('passport')
+const users = [];
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -104,8 +103,6 @@ app.post('/login', async (req,res) => {
          email:userResult.email, password:userResult.password};
       res.redirect("/database"); // homepage
     } else {
-      // Change: make some sort of alert message
-      // window.alert("invalid email or password");
       errors.push({message: "Invalid email or password"});
       res.render('pages/login', {errors});
     }
