@@ -108,16 +108,6 @@ app.post('/login', async (req,res) => {
   }
 });
 
-// test function to test session user
-// remove later
-app.get('/f', (req,res) => {
-  if(req.session.user){
-    res.send(`hi ${req.session.user.fname}`);
-  } else {
-    res.redirect("/login");
-  }
-})
-
 app.post('/logout', (req,res) => {
   req.session.destroy();
   res.redirect("/login");
