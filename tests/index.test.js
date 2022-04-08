@@ -7,12 +7,24 @@ const server = require('../index')
 
 chai.use(chaiHttp)
 
-describe('/login', () => {
+describe('homepage', () => {
+    it('should GET login page', (done) => {
+        chai.request(server)
+        .get("/")
+        .end((err, res) => {
+            res.should.have.status(200);
+            res.should.to.be.html;
+            done();
+        })
+    })
+})
+
+describe('login', () => {
     it('should GET login page', (done) => {
         chai.request(server)
             .get("/login")
             .end((err, res) => {
-                res.should.have.status(200)
+                res.should.have.status(200);
                 res.should.to.be.html;
                 done();
             })
@@ -24,7 +36,7 @@ describe('/login', () => {
             .redirects(0)
             .end((err,res) => {
                 res.should.have.status(302);
-                res.should.redirectTo("/")
+                res.should.redirectTo("/");
                 done();
             }) 
     })
@@ -35,7 +47,7 @@ describe('/login', () => {
             .redirects(0)
             .end((err,res) => {
                 res.should.have.status(302);
-                res.should.redirectTo("/")
+                res.should.redirectTo("/");
                 done();
             }) 
     })
@@ -52,12 +64,12 @@ describe('/login', () => {
     })
 })
 
-describe('/meeting', () => {
+describe('meeting', () => {
     it('should GET meeting page', (done) => {
         chai.request(server)
             .get("/meeting")
             .end((err, res) => {
-                res.should.have.status(200)
+                res.should.have.status(200);
                 res.should.to.be.html;
                 done();
             })
@@ -66,7 +78,7 @@ describe('/meeting', () => {
         chai.request(server)
             .get("/meeting/code")
             .end((err, res) => {
-                res.should.have.status(200)
+                res.should.have.status(200);
                 res.should.to.be.html;
                 done();
             })
@@ -75,10 +87,30 @@ describe('/meeting', () => {
         chai.request(server)
             .get('/meeting/room/:room')
             .end((err,res) => {
-                res.should.have.status(200)
+                res.should.have.status(200);
                 res.should.to.be.html;
                 done();
             })
     })
-    
+})
+
+describe('donate', () => {
+    it('should GET donation page', (done) => {
+        chai.request(server)
+            .get("/donate")
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.should.be.html;
+                done();
+            })
+    })
+    it('should redirect to login page when unregistered', (done) => {
+        chai.request(server)
+            .get("/transactions")
+            .end((err, res) => {
+                res.should.be.html;
+                res.should.have.status(200);
+                done();
+            })
+    })
 })

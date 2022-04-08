@@ -425,7 +425,7 @@ app.post('/meeting/code', async (req,res) => {
 app.get('/meeting/public', async (req,res) => {
   const roomId = uuidV4();
   const fName = req.session.user.fname;
-  const meetingName = `${fName} s meeting`; 
+  const meetingName = `${fName} meeting`; 
 
   try {
     await pool.query(`insert into activemeetings values('${roomId}', '${meetingName}', true)`);
@@ -438,7 +438,7 @@ app.get('/meeting/public', async (req,res) => {
 app.get('/meeting/private', async (req,res) => {
   const roomId = uuidV4();
   const fName = req.session.user.fname;
-  const meetingName = `${fName} s meeting`; 
+  const meetingName = `${fName} meeting`; 
 
   try {
     await pool.query(`insert into activemeetings values('${roomId}', '${meetingName}', false)`);
@@ -485,7 +485,6 @@ io.of("/room").on('connection', socket => {
       let roomUser = roomUsers.removeUser(userId);
       if (roomUser) {
         io.of("/room").to(roomId).emit('updateUsersList', roomUsers.getUserList(roomId));
-        roomUsers.removeUser(userId)
         socket.to(roomId).emit('user-disconnected', userId);
         // Remove room from activemeetings
         if (roomUsers.getUserList(roomId).length === 0) {
