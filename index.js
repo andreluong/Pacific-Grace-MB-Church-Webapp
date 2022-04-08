@@ -387,7 +387,11 @@ app.get('/meeting', async (req,res) => {
     if (req.session.user) {
       res.render('pages/meeting', {results : result.rows, user: req.session.user});
     } else {
-      res.redirect('/login')
+        if(req.session.user) {
+          res.render('pages/meeting', {'results' : result.rows, user : req.session.user});
+        } else {
+          res.redirect('/login')
+        }
     }
     client.release();
   } catch(err) {
@@ -494,6 +498,7 @@ io.of("/room").on('connection', socket => {
               console.log(`Error in deleting active meeting where id = ${roomId}`)
               res.send(error);
             }
+            console.log("meeting removed")
           });
           console.log(`terminated id = ${roomId}`);
           client.release();
